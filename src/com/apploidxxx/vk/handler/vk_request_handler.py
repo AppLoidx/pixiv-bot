@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 
 
-
-
 class AbsRequestHandler(ABC):
 
     @abstractmethod
