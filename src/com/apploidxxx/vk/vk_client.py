@@ -1,4 +1,5 @@
 import random
+from threading import Thread
 
 import requests
 import vk_api
@@ -49,11 +50,34 @@ class VkClient:
             _attachments.append(_photo_url)
         return _attachments
 
+    def get_handle_thread(self, user_input: str, user_id, vk_client) -> Thread:
+        return HandleThread(
+            "handle-thread-" + str(random.randint(1, 1000)), self.handler,
+            user_input, user_id, vk_client)
+
     def run(self):
         for event in self.longpoll.listen():
 
             if event.type == VkEventType.MESSAGE_NEW:
 
                 if event.to_me:
+                    self.get_handle_thread(event.text, event.user_id, self).start()
 
-                    self.handler.handle(event.text, event.user_id, self)
+
+class HandleThread(Thread):
+    _name = None
+    _handler = None
+    _input = None
+    _user_id = 0
+    _vk_client = None
+
+    def __init__(self, name: str, handler: AbsRequestHandler, user_input: str, user_id, vk_client):
+        Thread.__init__(self)
+        self._name = name
+        self._handler = handler
+        self._input = user_input
+        self._user_id = user_id
+        self._vk_client = vk_client
+
+    def run(self):
+        self._handler.handle(self._input, self._user_id, self._vk_client)
