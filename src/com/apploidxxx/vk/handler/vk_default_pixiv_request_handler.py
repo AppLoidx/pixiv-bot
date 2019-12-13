@@ -1,8 +1,9 @@
 from com.apploidxxx.pixiv.pixiv import Pixiv
+from com.apploidxxx.vk.handler.vk_request_handler import AbsRequestHandler
 from com.apploidxxx.vk.vk_client import VkClient
 
 
-class DefaultPixivRequestHandler:
+class DefaultPixivRequestHandler(AbsRequestHandler):
     pixiv = None
 
     def __init__(self, pixiv_pi: Pixiv):
